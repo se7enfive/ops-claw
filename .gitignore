@@ -1,0 +1,65 @@
+# Dependencies
+node_modules/
+
+# Build output
+out/
+dist/
+release/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Environment files (never commit secrets!)
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test output
+test-out*.log
+test-err*.log
+
+# Temporary files
+*.tmp
+*.temp
+err.txt
+out.txt
+stdout.txt
+stderr.txt
+
+# Electron specific
+release/
+
+# User data (never commit!)
+ops-claw-data.json
+credentials.json
+
+# Claude Code memory (personal)
+.claude/
+
+# Tool-specific (exclude)
+.sisyphus/
+
+# Misc
+*.bak
+*.backup

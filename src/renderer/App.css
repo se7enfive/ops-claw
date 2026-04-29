@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== 主题变量 ===== */
+:root {
+  --bg-primary: 255 255 255;         /* white */
+  --bg-secondary: 249 250 251;       /* gray-50 */
+  --bg-tertiary: 243 244 246;        /* gray-100 */
+  --bg-sidebar: 31 41 55;            /* gray-800 */
+  --bg-sidebar-hover: 55 65 81;      /* gray-700 */
+  --bg-card: 255 255 255;            /* white */
+  --bg-input: 255 255 255;           /* white */
+
+  --text-primary: 17 24 39;          /* gray-900 */
+  --text-secondary: 75 85 99;        /* gray-600 */
+  --text-tertiary: 107 114 128;      /* gray-500 */
+  --text-muted: 156 163 175;         /* gray-400 */
+  --text-sidebar: 255 255 255;
+
+  --border-primary: 229 231 235;     /* gray-200 */
+  --border-secondary: 243 244 246;   /* gray-100 */
+  --border-sidebar: 55 65 81;        /* gray-700 */
+
+  --accent: 34 197 94;               /* green-500 */
+  --accent-hover: 22 163 74;         /* green-600 */
+  --text-on-accent: 255 255 255;     /* white */
+}
+
+.dark {
+  --bg-primary: 30 30 46;            /* catppuccin surface0 */
+  --bg-secondary: 24 24 37;          /* catppuccin base */
+  --bg-tertiary: 49 50 68;           /* catppuccin surface1 */
+  --bg-sidebar: 17 17 27;            /* catppuccin crust */
+  --bg-sidebar-hover: 30 30 46;      /* catppuccin surface0 */
+  --bg-card: 36 36 54;
+  --bg-input: 24 24 37;
+
+  --text-primary: 205 214 244;       /* catppuccin text */
+  --text-secondary: 166 173 200;     /* catppuccin subtext0 */
+  --text-tertiary: 147 153 178;
+  --text-muted: 108 112 134;         /* catppuccin overlay0 */
+  --text-sidebar: 205 214 244;
+
+  --border-primary: 69 71 90;        /* catppuccin surface2 */
+  --border-secondary: 49 50 68;      /* catppuccin surface1 */
+  --border-sidebar: 49 50 68;
+
+  --accent: 166 227 161;             /* catppuccin green */
+  --accent-hover: 148 210 143;
+  --text-on-accent: 24 24 37;        /* catppuccin base (dark) */
+}
+
+/* ===== 覆写 Tailwind 工具类 ===== */
+@layer base {
+  /* 背景 */
+  .bg-white           { background-color: rgb(var(--bg-primary)) !important; }
+  .bg-gray-50         { background-color: rgb(var(--bg-secondary)) !important; }
+  .bg-gray-100        { background-color: rgb(var(--bg-tertiary)) !important; }
+  .bg-gray-800        { background-color: rgb(var(--bg-sidebar)) !important; }
+  .bg-gray-700        { background-color: rgb(var(--bg-sidebar-hover)) !important; }
+
+  /* 文字 */
+  .text-gray-900      { color: rgb(var(--text-primary)) !important; }
+  .text-gray-800      { color: rgb(var(--text-primary)) !important; }
+  .text-gray-700      { color: rgb(var(--text-secondary)) !important; }
+  .text-gray-600      { color: rgb(var(--text-secondary)) !important; }
+  .text-gray-500      { color: rgb(var(--text-tertiary)) !important; }
+  .text-gray-400      { color: rgb(var(--text-muted)) !important; }
+  .text-white         { color: rgb(var(--text-sidebar)) !important; }
+
+  /* 边框 */
+  .border-gray-200    { border-color: rgb(var(--border-primary)) !important; }
+  .border-gray-100    { border-color: rgb(var(--border-secondary)) !important; }
+  .border-gray-300    { border-color: rgb(var(--border-primary)) !important; }
+  .border-gray-700    { border-color: rgb(var(--border-sidebar)) !important; }
+
+  /* 强调色 */
+  .bg-green-500 { 
+    background-color: rgb(var(--accent)) !important; 
+    color: rgb(var(--text-on-accent)) !important; 
+  }
+  .bg-green-600,
+  .hover\:bg-green-600:hover { 
+    background-color: rgb(var(--accent-hover)) !important; 
+    color: rgb(var(--text-on-accent)) !important; 
+  }
+  .text-green-600     { color: rgb(var(--accent)) !important; }
+  .text-green-500     { color: rgb(var(--accent)) !important; }
+  .border-b-green-500 { border-bottom-color: rgb(var(--accent)) !important; }
+  .focus\:border-green-500:focus { border-color: rgb(var(--accent)) !important; }
+  .focus\:ring-green-500:focus { --tw-ring-color: rgb(var(--accent)) !important; }
+
+  /* hover 覆写 */
+  .hover\:bg-gray-50:hover  { background-color: rgb(var(--bg-secondary)) !important; }
+  .hover\:bg-gray-500:hover { background-color: rgb(var(--bg-sidebar-hover)) !important; }
+
+  /* 过渡 */
+  body {
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+}
+
+/* ===== 暗色下的特殊覆写 ===== */
+.dark .bg-blue-50     { background-color: rgba(137, 180, 250, 0.15) !important; }
+.dark .text-blue-700  { color: rgb(137 180 250) !important; }
+.dark .bg-emerald-50  { background-color: rgba(166, 227, 161, 0.15) !important; }
+.dark .text-emerald-700 { color: rgb(166 227 161) !important; }
+.dark .bg-green-50    { background-color: rgba(166, 227, 161, 0.15) !important; }
+.dark .text-green-700 { color: rgb(166 227 161) !important; }
+.dark .bg-yellow-50   { background-color: rgba(249, 226, 175, 0.15) !important; }
+.dark .text-yellow-700 { color: rgb(249 226 175) !important; }
+.dark .bg-amber-50    { background-color: rgba(250, 179, 135, 0.15) !important; }
+.dark .text-amber-700 { color: rgb(250 179 135) !important; }
+.dark .bg-red-50      { background-color: rgba(243, 139, 168, 0.15) !important; }
+.dark .text-red-700   { color: rgb(243 139 168) !important; }
+.dark .bg-purple-50   { background-color: rgba(203, 166, 247, 0.15) !important; }
+.dark .text-purple-700 { color: rgb(203 166 247) !important; }
+
+/* 暗色 placeholder */
+.dark textarea,
+.dark input {
+  background-color: rgb(var(--bg-input)) !important;
+  color: rgb(var(--text-primary)) !important;
+  border-color: rgb(var(--border-primary)) !important;
+}
+
+.dark textarea::placeholder,
+.dark input::placeholder {
+  color: rgb(var(--text-muted)) !important;
+}
+
+/* 暗色滚动条 */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.dark ::-webkit-scrollbar-track {
+  background: rgb(var(--bg-secondary));
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: rgb(var(--border-primary));
+  border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--text-muted));
+}
+
+/* ===== 基础样式 ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: rgb(var(--bg-tertiary));
+  color: rgb(var(--text-primary));
+}
+
+/* xterm 容器内的终端字体 */
+.xterm {
+  padding: 6px;
+}
