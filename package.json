@@ -2,7 +2,10 @@
   "name": "ops-claw",
   "version": "1.0.0",
   "description": "Ops Claw - AI-powered SSH server management with chat-style interface",
-  "author": "Ops Claw Contributors",
+  "author": {
+    "name": "Ops Claw Contributors",
+    "email": "contact@opsclaw.dev"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
