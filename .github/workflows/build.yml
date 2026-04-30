@@ -31,12 +31,21 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
+
+      # Linux 需要额外依赖用于 AppImage 构建
+      - name: Install Linux dependencies
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libarchive-tools rpm
 
       - name: Install dependencies
         run: npm ci
@@ -58,6 +67,7 @@ jobs:
             release/*.exe
             release/*.blockmap
           retention-days: 30
+          if-no-files-found: warn
 
       - name: Upload macOS artifacts
         if: matrix.platform == 'mac'
@@ -69,6 +79,7 @@ jobs:
             release/*.zip
             release/*.app
           retention-days: 30
+          if-no-files-found: warn
 
       - name: Upload Linux artifacts
         if: matrix.platform == 'linux'
@@ -79,15 +90,20 @@ jobs:
             release/*.AppImage
             release/*.deb
           retention-days: 30
+          if-no-files-found: warn
 
   release:
     needs: build
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -98,20 +114,17 @@ jobs:
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
+      - name: Display artifacts
+        run: find artifacts -type f
+
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           name: Ops Claw v${{ steps.get_version.outputs.VERSION }}
           tag_name: v${{ steps.get_version.outputs.VERSION }}
           draft: false
           prerelease: false
-          files: |
-            artifacts/windows/*.exe
-            artifacts/windows/*.blockmap
-            artifacts/macos/*.dmg
-            artifacts/macos/*.zip
-            artifacts/linux/*.AppImage
-            artifacts/linux/*.deb
+          files: artifacts/**/*
           body: |
             ## Ops Claw v${{ steps.get_version.outputs.VERSION }}
 
