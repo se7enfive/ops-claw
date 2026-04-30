@@ -11,6 +11,9 @@ on:
         required: false
         default: ''
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
@@ -31,8 +34,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -54,7 +55,7 @@ jobs:
         run: npm run build
 
       - name: Package for ${{ matrix.platform }}
-        run: npm run package:${{ matrix.platform }}
+        run: npm run package:${{ matrix.platform }} -- --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -77,7 +78,7 @@ jobs:
           path: |
             release/*.dmg
             release/*.zip
-            release/*.app
+            release/*.blockmap
           retention-days: 30
           if-no-files-found: warn
 
@@ -96,14 +97,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          persist-credentials: true
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
