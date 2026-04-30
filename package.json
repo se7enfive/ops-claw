@@ -58,6 +58,7 @@
   "build": {
     "appId": "com.opsclaw.app",
     "productName": "Ops Claw",
+    "npmRebuild": false,
     "directories": {
       "output": "release"
     },
