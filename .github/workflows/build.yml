@@ -1,0 +1,134 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # 当推送版本标签时触发（如 v1.0.0）
+  workflow_dispatch:  # 手动触发
+    inputs:
+      version:
+        description: 'Version to build (e.g., 1.0.1)'
+        required: false
+        default: ''
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            platform: win
+            artifact: windows
+          - os: macos-latest
+            platform: mac
+            artifact: macos
+          - os: ubuntu-latest
+            platform: linux
+            artifact: linux
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Package for ${{ matrix.platform }}
+        run: npm run package:${{ matrix.platform }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Windows artifacts
+        if: matrix.platform == 'win'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            release/*.exe
+            release/*.blockmap
+          retention-days: 30
+
+      - name: Upload macOS artifacts
+        if: matrix.platform == 'mac'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            release/*.dmg
+            release/*.zip
+            release/*.app
+          retention-days: 30
+
+      - name: Upload Linux artifacts
+        if: matrix.platform == 'linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            release/*.AppImage
+            release/*.deb
+          retention-days: 30
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Ops Claw v${{ steps.get_version.outputs.VERSION }}
+          tag_name: v${{ steps.get_version.outputs.VERSION }}
+          draft: false
+          prerelease: false
+          files: |
+            artifacts/windows/*.exe
+            artifacts/windows/*.blockmap
+            artifacts/macos/*.dmg
+            artifacts/macos/*.zip
+            artifacts/linux/*.AppImage
+            artifacts/linux/*.deb
+          body: |
+            ## Ops Claw v${{ steps.get_version.outputs.VERSION }}
+
+            ### 下载
+
+            | 平台 | 文件 |
+            |------|------|
+            | Windows | `Ops Claw Setup ${{ steps.get_version.outputs.VERSION }}.exe` (安装版) |
+            | Windows | `Ops Claw ${{ steps.get_version.outputs.VERSION }}.exe` (便携版) |
+            | macOS | `Ops Claw-${{ steps.get_version.outputs.VERSION }}.dmg` |
+            | macOS | `Ops Claw-${{ steps.get_version.outputs.VERSION }}-mac.zip` |
+            | Linux | `Ops Claw-${{ steps.get_version.outputs.VERSION }}.AppImage` |
+            | Linux | `ops-claw_${{ steps.get_version.outputs.VERSION }}_amd64.deb` |
+
+            ### 更新说明
+
+            请查看 [CHANGELOG.md](https://github.com/se7enfive/ops-claw/blob/main/CHANGELOG.md) 了解详细更新内容。
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
